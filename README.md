@@ -37,7 +37,7 @@
 
 ### 2. GET SESSION ID VIA PAIR CODE
 
-<a href='https://arthur-Md-1-o9f1.onrender.com/pair' target="_blank"><img alt='Get Session ID' src='https://img.shields.io/badge/Click here to get your session id-blue?style=for-the-badge&logo=opencv&logoColor=white'/></a>
+<a href='https://arthur-Md-1-o9f1.onrender.com' target="_blank"><img alt='Get Session ID' src='https://img.shields.io/badge/Click here to get your session id-blue?style=for-the-badge&logo=opencv&logoColor=white'/></a>
 
 ### DEPLOY TO HEROKU
 

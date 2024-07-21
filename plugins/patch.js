@@ -192,7 +192,6 @@ smd(
   }
 );
 astro_patch.smd(
-  astro_patch.smd(
   {
     cmdname: "menu",
     desc: "Help list",

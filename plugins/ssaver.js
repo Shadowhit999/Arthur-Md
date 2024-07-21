@@ -114,19 +114,3 @@ smd({ on: "status" }, async (message, text) => {
     console.log(e);
   }
 });
-
-smd(
-  {
-    cmdname: "rias",
-    desc: "Rias Gremory Bot is a new WhatsApp bot made by Toxxic Tech using Asta Md as a base. Enjoy ",
-  },
-  async (message, text) => {
-    try {
-      message.send(`Rias Gremory Bot is a new WhatsApp bot made by Toxxic Tech using Asta Md as a base. Enjoy`.trim());
-    } catch (e) {
-      console.error("Error:", e);
-      message.reply(`*ERROR!* `);
-    }
-  }
-);
-

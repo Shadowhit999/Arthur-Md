@@ -192,42 +192,66 @@ smd(
   }
 );
 astro_patch.smd(
+  astro_patch.smd(
   {
     cmdname: "menu",
-    desc: "Access Arthur's commands",
+    desc: "Help list",
     react: "🌟",
+    desc: "To show all avaiable commands.",
     type: "user",
     filename: __filename,
   },
   async (message, input) => {
     try {
-      // Greet the user
-      await message.reply("Hey there! You are now in the presence of Arthur-md, which command would you like to use 👑");
-
-      // Get commands
+    await message.reply("Hey there!, you are now in the presence of Arthur-Md what command would you like to use 👑"); 
       const { commands } = require("../lib");
-
-      // Check if the user input matches a command
-      const commandInput = input.split(" ")[0]?.toLowerCase();
-      if (commandInput) {
-        const foundCommand = commands.find(cmd => cmd.pattern === commandInput);
+      if (input.split(" ")[0]) {
+        let commandDetails = [];
+        const foundCommand = commands.find(
+          (cmd) => cmd.pattern === input.split(" ")[0].toLowerCase()
+        );
         if (foundCommand) {
-          // If the command is found, reply with its details
-          const commandDetails = [
-            `🔮 *Command:* ${foundCommand.pattern}`,
-            foundCommand.category ? `👑 *Category:* ${foundCommand.category}` : "",
-            foundCommand.alias?.length ? `👑 *Alias:* ${foundCommand.alias.join(", ")}` : "",
-            foundCommand.desc ? `✨ *Description:* ${foundCommand.desc}` : "",
-            foundCommand.use ? `📖 *Usage:*\n\`\`\`${prefix}${foundCommand.pattern} ${foundCommand.use}\`\`\`` : "",
-            foundCommand.usage ? `📖 *Usage:*\n\`\`\`${foundCommand.usage}\`\`\`` : "",
-          ].filter(detail => detail).join("\n");
-          
-          await message.reply(commandDetails);
-          return;
+          commandDetails.push("*🔉Command:* " + foundCommand.pattern);
+          if (foundCommand.category) {
+            commandDetails.push("*💁Category:* " + foundCommand.category);
+          }
+          if (foundCommand.alias && foundCommand.alias[0]) {
+            commandDetails.push("*💁Alias:* " + foundCommand.alias.join(", "));
+          }
+          if (foundCommand.desc) {
+            commandDetails.push("*💁Description:* " + foundCommand.desc);
+          }
+          if (foundCommand.use) {
+            commandDetails.push(
+              "*〽️Usage:*\n ```" +
+                prefix +
+                foundCommand.pattern +
+                " " +
+                foundCommand.use +
+                "```"
+            );
+          }
+          if (foundCommand.usage) {
+            commandDetails.push(
+              "*〽️Usage:*\n ```" + foundCommand.usage + "```"
+            );
+          }
+          await message.reply(commandDetails.join("\n"));
         }
       }
 
-      // Menu themes
+      let menuThemeType;
+      let menuThemeHeader;
+      let menuThemeFooter;
+      let menuThemeCategoryHeader;
+      let menuThemeCategoryFooter;
+      let menuThemeCommandPrefix;
+      let menuThemeCommandFooter;
+
+      if (Config.menu === "") {
+        menuThemeType = Math.floor(Math.random() * 4) + 1;
+      }
+
       if (
         menuThemeType === 1 ||
         Config.menu.trim().startsWith("1") ||
@@ -262,13 +286,12 @@ astro_patch.smd(
         menuThemeCommandFooter = "╰════════════─⊷";
       }
 
-      // Select a random menu theme
-      const menuTheme = menuThemes[Math.floor(Math.random() * menuThemes.length)];
-
-      // Categorize commands
       const categorizedCommands = {};
-      commands.forEach(command => {
-        if (!command.dontAddCommandList && command.pattern) {
+      commands.map(async (command) => {
+        if (
+          command.dontAddCommandList === false &&
+          command.pattern !== undefined
+        ) {
           if (!categorizedCommands[command.category]) {
             categorizedCommands[command.category] = [];
           }
@@ -276,42 +299,58 @@ astro_patch.smd(
         }
       });
 
-      // Current time and date
       const currentTime = message.time;
       const currentDate = message.date;
+      let menuText = `
+${menuThemeHeader}
+${menuThemeCommandPrefix} *ᴏᴡɴᴇʀ:* ${Config.ownername}
+${menuThemeCommandPrefix} *ʀᴜɴᴛɪᴍᴇ:* ${runtime(process.uptime())}
+${menuThemeCommandPrefix} *ʀᴀᴍ ᴜsᴀɢᴇ:* ${formatp(os.totalmem() - os.freemem())}
+${menuThemeCommandPrefix} *ᴛɪᴍᴇ:* ${currentTime}
+${menuThemeCommandPrefix} *ᴅᴀᴛᴇ:* ${currentDate}
+${menuThemeCommandPrefix} *ᴄᴏᴍᴍᴀɴᴅs:* ${commands.length}
+${menuThemeCommandPrefix} *ᴜsᴀɢᴇ ᴛʀᴇɴᴅ:* ${trend_usage}
+${menuThemeCommandPrefix} *ᴅᴀᴛᴀʙᴀsᴇ ᴛʏᴘᴇ:* ${database_info}
+${menuThemeFooter}                         
+*Arthur-MD*
+${readmore}`;
 
-      // Construct the menu header
-      const menuHeader = `
-${menuTheme.header}
-👑 *Owner:* ${Config.ownername}
-⏳ *Uptime:* ${runtime(process.uptime())}
-💾 *RAM Usage:* ${formatp(os.totalmem() - os.freemem())}
-🕒 *Time:* ${currentTime}
-📅 *Date:* ${currentDate}
-📜 *Commands:* ${commands.length}
-📊 *Usage Trend:* ${trend_usage}
-🗄 *Database:* ${database_info}`;
-
-      // Initialize menu text
-      let menuText = `${menuHeader}\n`;
-
-      // Populate menu with categories and commands
-      for (const [category, commandList] of Object.entries(categorizedCommands)) {
+      for (const category in categorizedCommands) {
         menuText += `
-${menuTheme.categoryHeader}${category}${menuTheme.categoryFooter}
-${commandList.map(cmd => `${menuTheme.commandPrefix}${Config.HANDLERS}${cmd}`).join("\n")}`;
+        ${menuThemeCategoryHeader} *${tiny(
+          category
+        )}* ${menuThemeCategoryFooter}\n`;
+        if (input.toLowerCase() === category.toLowerCase()) {
+          menuText = `${menuThemeCategoryHeader} *${tiny(
+            category
+          )}* ${menuThemeCategoryFooter}\n`;
+          for (const command of categorizedCommands[category]) {
+            menuText += `${menuThemeCommandPrefix} ${Config.HANDLERS} ${tiny(
+              command,
+              1
+            )}\n`;
+          }
+          menuText += `${menuThemeCommandFooter}\n`;
+          break;
+        } else {
+          for (const command of categorizedCommands[category]) {
+            menuText += `${menuThemeCommandPrefix} ${Config.HANDLERS} ${tiny(
+              command,
+              1
+            )}\n`;
+          }
+          menuText += `${menuThemeCommandFooter}\n`;
+        }
       }
+      menuText += Config.caption;
 
-      // Options for sending the menu
       const messageOptions = {
         caption: menuText,
         ephemeralExpiration: 30,
       };
-
-      // Send the menu
-      await message.sendUi(message.chat, messageOptions, message);
+      return await message.sendUi(message.chat, messageOptions, message);
     } catch (error) {
-      await message.error(`${error}\nCommand: menu`, error);
+      await message.error(error + "\nCommand: menu", error);
     }
   }
 );

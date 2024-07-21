@@ -37,8 +37,8 @@ global.save_status = process.env.AUTO_SAVE_STATUS || "false";
 global.save_status_from = process.env.SAVE_STATUS_FROM || "";
 global.read_status_from = process.env.READ_STATUS_FROM || "";
 
-global.api_smd = "https://toxic-session-id.onrender.com/pair";
-global.scan = "https://riasgremorybot-xcqv.onrender.com/";
+global.api_smd = "https://arthur-scanner.onrender.com/pair";
+global.scan = "https://arthur-scanner.onrender.com/";
 
 global.SESSION_ID =
   process.env.SESSION_ID ||
